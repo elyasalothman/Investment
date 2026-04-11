@@ -8,6 +8,7 @@
         :root {
             --bg: #000000;
             --surface: #0d1117;
+            --surface-hover: #161b22;
             --text: #c9d1d9;
             --accent: #2f81f7;
             --border: #30363d;
@@ -16,15 +17,26 @@
             --gold: #d29922;
         }
 
+        /* Scanline Effect */
+        body::before {
+            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2; background-size: 100% 2px, 3px 100%; pointer-events: none; opacity: 0.3;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Courier New', Courier, monospace; /* خط مؤسسي */
             background: var(--bg); color: var(--text);
             margin: 0; padding: 0; overflow: hidden; height: 100vh;
             display: flex; flex-direction: column;
             user-select: none; -webkit-user-select: none;
         }
 
-        /* شاشة العبور الأمنية */
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
         #auth-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; display: flex; flex-direction: column; 
@@ -37,61 +49,68 @@
             color: var(--accent); padding: 15px 50px; font-size: 1.2rem;
             border-radius: 4px; cursor: pointer; text-transform: uppercase;
             letter-spacing: 2px; transition: 0.3s;
+            text-shadow: 0 0 8px rgba(47, 129, 247, 0.4);
+            box-shadow: inset 0 0 10px rgba(47,129,247,0.1);
         }
-        .auth-btn:hover { background: var(--accent); color: #fff; box-shadow: 0 0 25px rgba(47, 129, 247, 0.4); }
+        .auth-btn:hover { background: var(--accent); color: #fff; box-shadow: 0 0 25px rgba(47, 129, 247, 0.5); }
         .unlocked #auth-screen { opacity: 0; pointer-events: none; }
 
-        /* الشريط العلوي */
         .status-bar {
             display: flex; justify-content: space-between; align-items: center;
             padding: 10px 20px; background: var(--surface); border-bottom: 1px solid var(--border);
-            font-size: 0.85rem; font-family: monospace; letter-spacing: 1px;
+            font-size: 0.85rem; font-weight: bold; letter-spacing: 1px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.8); z-index: 10;
         }
+        
+        .glow-text { text-shadow: 0 0 8px rgba(47, 129, 247, 0.6); color: var(--accent); }
+
         .clock-widget { display: flex; gap: 25px; }
         .clock { display: flex; align-items: center; gap: 6px; }
         .indicator { width: 8px; height: 8px; border-radius: 50%; }
-        .indicator.active { background: var(--green); box-shadow: 0 0 8px var(--green); }
-        .indicator.inactive { background: var(--red); }
+        .indicator.active { background: var(--green); box-shadow: 0 0 10px var(--green); }
+        .indicator.inactive { background: var(--red); box-shadow: 0 0 10px var(--red); }
 
-        /* التخطيط الرئيسي للشاشات */
         #workspace {
             display: flex; flex: 1; gap: 10px; padding: 10px; box-sizing: border-box;
-            height: calc(100vh - 40px);
+            height: calc(100vh - 40px); z-index: 3; position: relative;
         }
 
         .panel {
             background: var(--surface); border: 1px solid var(--border);
             border-radius: 6px; overflow: hidden; display: flex; flex-direction: column;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
         }
         
         .panel-header {
-            padding: 8px 12px; background: #161b22; border-bottom: 1px solid var(--border);
+            padding: 8px 12px; background: var(--surface-hover); border-bottom: 1px solid var(--border);
             font-size: 0.8rem; font-weight: bold; color: #8b949e; text-transform: uppercase;
-            display: flex; justify-content: space-between; align-items: center;
+            text-shadow: 0 0 10px rgba(139, 148, 158, 0.3);
         }
 
-        /* الأعمدة الديناميكية */
-        .col-left { width: 320px; display: flex; flex-direction: column; gap: 10px; }
+        .col-left { width: 340px; display: flex; flex-direction: column; gap: 10px; }
         .col-main { flex: 1; display: flex; flex-direction: column; gap: 10px; }
-        .col-right { width: 350px; display: flex; flex-direction: column; gap: 10px; }
+        .col-right { width: 360px; display: flex; flex-direction: column; gap: 10px; }
 
         /* حاسبة المخاطر */
-        .risk-calc { padding: 15px; font-size: 0.85rem; }
-        .risk-calc input { width: 100%; padding: 8px; margin-bottom: 8px; background: #010409; border: 1px solid var(--border); color: #fff; border-radius: 4px; box-sizing: border-box; }
-        .risk-calc button { width: 100%; padding: 10px; background: var(--accent); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        .risk-calc button:hover { filter: brightness(1.2); }
-        
+        .risk-calc { padding: 15px; font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; }
+        .risk-calc input { width: 100%; padding: 8px; background: #010409; border: 1px solid var(--border); color: #fff; border-radius: 4px; box-sizing: border-box; font-family: monospace; outline: none;}
+        .risk-calc input:focus { border-color: var(--accent); box-shadow: 0 0 5px rgba(47,129,247,0.3); }
+        .risk-calc button { padding: 10px; background: transparent; color: var(--accent); border: 1px solid var(--accent); border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s; text-transform: uppercase; }
+        .risk-calc button:hover { background: var(--accent); color: white; box-shadow: 0 0 15px rgba(47, 129, 247, 0.4); }
+
+        /* المفكرة السريعة */
+        .scratchpad { flex: 1; padding: 10px; background: #010409; color: var(--text); border: none; outline: none; font-family: monospace; resize: none; font-size: 0.9rem; }
     </style>
 </head>
 <body id="app">
 
     <div id="auth-screen">
-        <h2 style="font-weight: 300; letter-spacing: 6px; margin-bottom: 30px; color: #fff;">EXECUTIVE DESK</h2>
-        <button class="auth-btn" onclick="initTerminal()">Connect</button>
+        <h2 style="font-weight: 300; letter-spacing: 8px; margin-bottom: 30px; color: #fff; text-shadow: 0 0 15px rgba(255,255,255,0.5);">EXECUTIVE DESK</h2>
+        <button class="auth-btn" onclick="initTerminal()">Initialize Connection</button>
     </div>
 
     <div class="status-bar">
-        <div style="font-weight: bold; color: var(--accent);">OPS & TRADING CENTER</div>
+        <div class="glow-text">OPS & TRADING CENTER [SECURE CONNECTION]</div>
         <div class="clock-widget">
             <div class="clock"><div class="indicator active"></div> SYS: ONLINE</div>
             <div class="clock"><div class="indicator" id="ny-ind"></div> NY: <span id="time-ny">--:--</span></div>
@@ -103,59 +122,79 @@
         
         <div class="col-left">
             <div class="panel" style="flex: 1.5;">
-                <div class="panel-header">📊 Markets & Commodities</div>
+                <div class="panel-header">📊 Strategic Watchlist</div>
                 <div id="watchlist-container" style="height: 100%;"></div>
             </div>
             <div class="panel" style="height: auto;">
-                <div class="panel-header">⚖️ Risk & Allocation</div>
+                <div class="panel-header">⚖️ Risk & Position Sizing</div>
                 <div class="risk-calc">
-                    <input type="number" id="capital" placeholder="حجم السيولة ($)">
+                    <div style="display: flex; gap: 5px;">
+                        <input type="number" id="capital" placeholder="حجم السيولة ($)" style="flex: 2;">
+                        <input type="number" id="riskPct" placeholder="المخاطرة %" value="1" style="flex: 1;">
+                    </div>
                     <div style="display: flex; gap: 5px;">
                         <input type="number" id="entryPx" placeholder="سعر الدخول">
-                        <input type="number" id="stopPx" placeholder="الوقف المسموح">
+                        <input type="number" id="stopPx" placeholder="الوقف">
+                        <input type="number" id="targetPx" placeholder="الهدف (اختياري)">
                     </div>
-                    <button onclick="calcRisk()">حساب الحجم (مخاطرة 1%)</button>
-                    <div id="riskResult" style="margin-top: 10px; text-align: center; color: var(--gold); font-weight: bold; font-size: 1.1rem;"></div>
+                    <button onclick="calcRisk()">Execute Calculation</button>
+                    <div id="riskResult" style="margin-top: 10px; padding: 10px; background: #010409; border: 1px dashed var(--border); border-radius: 4px; display: none;"></div>
                 </div>
             </div>
         </div>
 
         <div class="col-main">
-            <div class="panel" style="flex: 2;">
+            <div class="panel" style="flex: 2.5;">
                 <div class="panel-header">📈 Core Charting Terminal</div>
                 <div id="chart-container" style="height: 100%;"></div>
             </div>
             <div class="panel" style="flex: 1;">
-                <div class="panel-header">🌍 Geopolitical & Market Radar</div>
-                <div id="news-container" style="height: 100%;"></div>
+                <div class="panel-header">📝 Tactical Scratchpad (Auto-Save)</div>
+                <textarea id="scratchpad" class="scratchpad" placeholder="سجل ملاحظات التداول، نقاط الدخول، والتحليل اللحظي هنا..."></textarea>
             </div>
         </div>
 
         <div class="col-right">
-            <div class="panel" style="height: 100%;">
-                <div class="panel-header">📆 Global Economic Calendar</div>
-                <div id="calendar-container" style="height: 100%;"></div>
+            <div class="panel" style="flex: 1;">
+                <div class="panel-header">🌍 Geopolitical & Market Radar</div>
+                <div id="news-container" style="height: 100%;"></div>
+            </div>
+            <div class="panel" style="flex: 1;">
+                <div class="panel-header">📆 Global Economic & Earnings</div>
+                <div id="calendar-container" style="height: 50%; border-bottom: 1px solid var(--border);"></div>
+                <div id="earnings-container" style="height: 50%;"></div>
             </div>
         </div>
 
     </div>
 
     <script>
-        // بروتوكول الأمان
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.onkeydown = e => { if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67))) return false; };
+
+        // التهيئة واسترجاع البيانات المحفوظة
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedCapital = localStorage.getItem('gex_capital');
+            if(savedCapital) document.getElementById('capital').value = savedCapital;
+
+            const savedNotes = localStorage.getItem('gex_scratchpad');
+            const scratchpad = document.getElementById('scratchpad');
+            if(savedNotes) scratchpad.value = savedNotes;
+            
+            scratchpad.addEventListener('input', () => {
+                localStorage.setItem('gex_scratchpad', scratchpad.value);
+            });
+        });
 
         function initTerminal() {
             document.body.classList.add('unlocked');
             startClocks();
-            setTimeout(injectWidgets, 400); // تأخير بسيط لضمان سلاسة الفتح
+            setTimeout(injectWidgets, 300);
         }
 
-        // توقيتات الأسواق
         function startClocks() {
             setInterval(() => {
                 const now = new Date();
-                
                 const ruhTime = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Riyadh"}));
                 document.getElementById('time-ruh').innerText = ruhTime.toLocaleTimeString('en-US', {hour12: false, hour: '2-digit', minute:'2-digit'});
                 const ruhDay = ruhTime.getDay(); const ruhHour = ruhTime.getHours();
@@ -170,52 +209,49 @@
             }, 1000);
         }
 
-        // تحميل الأدوات (Widgets)
         function injectWidgets() {
             const config = { theme: "dark", locale: "ar_SA", transparent: true };
 
-            // 1. قائمة المراقبة والمواد الصناعية
             const script1 = document.createElement('script');
             script1.src = "https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js";
             script1.async = true;
             script1.innerHTML = JSON.stringify({
-                "colorTheme": config.theme, "dateRange": "1M", "showChart": true, "locale": config.locale,
+                "colorTheme": config.theme, "dateRange": "1M", "showChart": false, "locale": config.locale,
                 "width": "100%", "height": "100%", "isTransparent": config.transparent,
                 "tabs": [
                     {
-                        "title": "المحفظة الاستراتيجية",
+                        "title": "Equities & Indices",
                         "symbols": [
-                            {"s": "TADAWUL:TASI", "d": "مؤشر تاسي"},
+                            {"s": "NASDAQ:QQQ", "d": "Invesco QQQ"},
+                            {"s": "NASDAQ:TQQQ", "d": "ProShares UltraPro QQQ"},
                             {"s": "AMEX:SPY", "d": "S&P 500"},
-                            {"s": "OANDA:XAUUSD", "d": "الذهب"},
-                            {"s": "BINANCE:BTCUSD", "d": "بيتكوين"}
+                            {"s": "TADAWUL:2222", "d": "Saudi Aramco"},
+                            {"s": "TADAWUL:TASI", "d": "مؤشر تاسي"}
                         ]
                     },
                     {
-                        "title": "مؤشرات الصناعة والتشغيل",
+                        "title": "Commodities & Ops",
                         "symbols": [
-                            {"s": "COMEX:HG1!", "d": "النحاس (العقود الآجلة)"},
-                            {"s": "NYMEX:CL1!", "d": "النفط الخام"},
-                            {"s": "CME:LBS1!", "d": "الأخشاب"},
-                            {"s": "COMEX:ALI1!", "d": "الألمنيوم"}
+                            {"s": "OANDA:XAUUSD", "d": "Gold"},
+                            {"s": "NYMEX:CL1!", "d": "Crude Oil"},
+                            {"s": "COMEX:HG1!", "d": "Copper"},
+                            {"s": "CME:LBS1!", "d": "Lumber"}
                         ]
                     }
                 ]
             });
             document.getElementById('watchlist-container').appendChild(script1);
 
-            // 2. الرسم البياني المركزي
             const script2 = document.createElement('script');
             script2.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
             script2.async = true;
             script2.innerHTML = JSON.stringify({
-                "autosize": true, "symbol": "AMEX:SPY", "interval": "D", "timezone": "Asia/Riyadh",
+                "autosize": true, "symbol": "NASDAQ:QQQ", "interval": "D", "timezone": "Asia/Riyadh",
                 "theme": config.theme, "style": "1", "locale": config.locale, "enable_publishing": false,
                 "hide_top_toolbar": false, "container_id": "chart-container"
             });
             document.getElementById('chart-container').appendChild(script2);
 
-            // 3. رادار الأخبار العالمية
             const script3 = document.createElement('script');
             script3.src = "https://s3.tradingview.com/external-embedding/embed-widget-timeline.js";
             script3.async = true;
@@ -225,7 +261,6 @@
             });
             document.getElementById('news-container').appendChild(script3);
 
-            // 4. الأجندة الاقتصادية
             const script4 = document.createElement('script');
             script4.src = "https://s3.tradingview.com/external-embedding/embed-widget-events.js";
             script4.async = true;
@@ -234,19 +269,61 @@
                 "locale": config.locale, "importanceFilter": "-1,0,1"
             });
             document.getElementById('calendar-container').appendChild(script4);
+
+            // ودجت الأرباح
+            const script5 = document.createElement('script');
+            script5.src = "https://s3.tradingview.com/external-embedding/embed-widget-events.js"; // استخدام نفس الـ API مع تعديل الفلاتر
+            script5.async = true;
+            script5.innerHTML = JSON.stringify({
+                "width": "100%", "height": "100%", "colorTheme": config.theme, "isTransparent": config.transparent,
+                "locale": config.locale, "importanceFilter": "-1,0,1", "currencyFilter": "USD,SAR"
+            });
+            document.getElementById('earnings-container').appendChild(script5);
         }
 
-        // حاسبة المخاطر
+        // حاسبة المخاطر المتقدمة
         function calcRisk() {
             const cap = parseFloat(document.getElementById('capital').value);
+            const riskPct = parseFloat(document.getElementById('riskPct').value) || 1;
             const entry = parseFloat(document.getElementById('entryPx').value);
             const stop = parseFloat(document.getElementById('stopPx').value);
+            const target = parseFloat(document.getElementById('targetPx').value);
             
             if(cap && entry && stop) {
-                const riskAmount = cap * 0.01; 
+                localStorage.setItem('gex_capital', cap);
+                
+                const riskAmount = cap * (riskPct / 100); 
                 const riskPerShare = Math.abs(entry - stop);
                 if(riskPerShare === 0) return;
-                document.getElementById('riskResult').innerText = `حجم المركز: ${(riskAmount / riskPerShare).toFixed(2)}`;
+                
+                const positionSize = riskAmount / riskPerShare;
+                const totalValue = positionSize * entry;
+                
+                let rrText = "";
+                if(target) {
+                    const reward = Math.abs(target - entry);
+                    const rr = (reward / riskPerShare).toFixed(2);
+                    const potentialProfit = (reward * positionSize).toFixed(2);
+                    rrText = `<div style="color: var(--accent); font-size: 0.9rem; margin-top: 5px;">R/R: ${rr}x | ربح متوقع: $${potentialProfit}</div>`;
+                }
+                
+                const resultDiv = document.getElementById('riskResult');
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span style="color: var(--text);">المبلغ المُخاطر:</span>
+                        <span style="color: var(--red); font-weight: bold;">$${riskAmount.toFixed(2)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 1.1rem; color: var(--gold); font-weight: bold;">
+                        <span>الكمية:</span>
+                        <span>${positionSize.toFixed(2)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--border);">
+                        <span>إجمالي المركز:</span>
+                        <span>$${totalValue.toFixed(2)}</span>
+                    </div>
+                    ${rrText}
+                `;
             }
         }
     </script>
